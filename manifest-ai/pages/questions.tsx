@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { motion } from 'framer-motion';
 
 const questions = [
-  "Describe your ideal life in a few sentences.",
-  "What are your top 3 goals this year?",
-  "What kind of environment makes you feel most alive?",
-  "Describe your dream job or passion project.",
-  "What kind of people do you want in your life?",
-  "How do you envision your health and fitness?",
-  "If money wasn’t a problem, what would you do daily?",
-  "What hobbies or passions do you wish you had time for?",
-  "Where in the world do you dream of going?",
-  "What would you want your legacy to be?",
+  "What does your perfect day look like from start to finish?",
+  "What kind of home do you dream of living in?",
+  "What is one long-term personal goal you’re working toward?",
+  "What kind of experiences make you feel most fulfilled?",
+  "What are 3 things you want to achieve in the next 5 years?",
+  "If you could master any skill instantly, what would it be and why?",
+  "How do you define success for yourself?",
+  "What kind of impact do you want to make on the world or others?",
+  "What environment or setting do you feel most peaceful in?",
+  "Who or what inspires you the most right now, and why?",
 ];
 
 export default function QuestionsPage() {
@@ -24,7 +25,6 @@ export default function QuestionsPage() {
     if (currentStep < questions.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Submit all answers
       const fullAnswers = [...answers, notes];
       localStorage.setItem('visionAnswers', JSON.stringify(fullAnswers));
       router.push('/generate');
@@ -36,10 +36,15 @@ export default function QuestionsPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gray-50">
-      <div className="w-full max-w-xl bg-white p-8 rounded-lg shadow">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-xl bg-gray-900 p-8 rounded-lg shadow-xl border border-gray-700"
+      >
         <h2 className="text-2xl font-bold mb-4">Question {currentStep + 1}</h2>
-        <p className="mb-4">{questions[currentStep]}</p>
+        <p className="mb-4 text-gray-300">{questions[currentStep]}</p>
         <textarea
           value={answers[currentStep]}
           onChange={(e) => {
@@ -47,25 +52,30 @@ export default function QuestionsPage() {
             updated[currentStep] = e.target.value;
             setAnswers(updated);
           }}
-          className="w-full border border-gray-300 rounded p-3 mb-6"
+          className="w-full bg-black border border-gray-600 text-white rounded p-3 mb-6 focus:outline-none focus:ring-2 focus:ring-pink-400"
           rows={5}
         />
         <div className="flex justify-between">
-          <button onClick={handleBack} disabled={currentStep === 0} className="px-4 py-2 rounded bg-gray-300">Back</button>
-          <button onClick={handleNext} className="px-4 py-2 rounded bg-blue-600 text-white">{currentStep === questions.length - 1 ? 'Finish' : 'Next'}</button>
+          <button onClick={handleBack} disabled={currentStep === 0} className="px-4 py-2 rounded bg-gray-600 text-white hover:bg-gray-500 transition">⬅️ Back</button>
+          <button onClick={handleNext} className="px-4 py-2 rounded bg-pink-500 text-white hover:bg-pink-600 transition">{currentStep === questions.length - 1 ? 'Finish 🏁' : 'Next ➡️'}</button>
         </div>
-      </div>
+      </motion.div>
 
       {currentStep === questions.length - 1 && (
-        <div className="w-full max-w-xl mt-8 bg-white p-6 rounded-lg shadow">
-          <h3 className="text-xl font-semibold mb-2">Additional Notes</h3>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="w-full max-w-xl mt-8 bg-gray-900 p-6 rounded-lg shadow-xl border border-gray-700"
+        >
+          <h3 className="text-xl font-semibold mb-2">📝 Additional Notes</h3>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full border border-gray-300 rounded p-3"
+            className="w-full bg-black border border-gray-600 text-white rounded p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"
             rows={4}
           />
-        </div>
+        </motion.div>
       )}
     </div>
   );

@@ -1,32 +1,57 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 
 export default function GeneratePage() {
-  const [prompts, setPrompts] = useState<string[]>([]);
+  const [prompt, setPrompt] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPrompts = async () => {
+    const fetchMasterPrompt = async () => {
       const answers = JSON.parse(localStorage.getItem('visionAnswers') || '[]');
-      const res = await fetch('/api/generate-prompts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers })
-      });
-      const data = await res.json();
-      setPrompts(data.prompts);
+      const profile = answers.join('\n');
+
+      try {
+        const res = await fetch('/api/generate-master-prompt', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ profile })
+        });
+        const data = await res.json();
+        setPrompt(data.prompt || 'No prompt received.');
+      } catch (err) {
+        console.error('Error fetching prompt:', err);
+        setPrompt('Something went wrong!');
+      } finally {
+        setLoading(false);
+      }
     };
-    fetchPrompts();
+
+    fetchMasterPrompt();
   }, []);
 
   return (
-    <div className="min-h-screen p-6 bg-gray-100">
-      <h1 className="text-3xl font-bold text-center mb-8">Your AI Vision Prompts</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        {prompts.map((prompt, i) => (
-          <div key={i} className="p-4 bg-white rounded shadow border">
-            <p>{prompt}</p>
-          </div>
-        ))}
-      </div>
+    <div className="min-h-screen p-6 bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+      <motion.h1
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.7 }}
+        className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-pink-400 to-yellow-400 text-transparent bg-clip-text"
+      >
+        ✨ Your AI-Generated Master Prompt
+      </motion.h1>
+
+      {loading ? (
+        <p className="text-center text-gray-300 animate-pulse">Generating your vision prompt... ⏳</p>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="max-w-3xl mx-auto bg-gray-900 p-6 rounded-lg shadow-lg border border-gray-700"
+        >
+          <p className="whitespace-pre-wrap text-lg leading-relaxed text-pink-200">{prompt}</p>
+        </motion.div>
+      )}
     </div>
   );
 }
