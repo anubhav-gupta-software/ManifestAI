@@ -17,11 +17,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const generateImage = async (prompt: string) => {
+    // Split prompt by delimiter to get individual image prompts
+    const splitPrompts = prompt.split('.....______......').map(p => p.trim()).filter(p => p.length > 0);
+
+    const generateImage = async (individualPrompt: string) => {
       const prediction = await replicate.predictions.create({
         version: 'black-forest-labs/flux-1.1-pro',
         input: {
-          prompt,
+          prompt: individualPrompt,
           prompt_upsampling: true,
         },
       });
@@ -42,8 +45,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     };
 
-    const generationCount = 10;
-    const imagePromises = Array.from({ length: generationCount }, () => generateImage(prompt));
+    // Generate images concurrently for each unique image prompt
+    const imagePromises = splitPrompts.map(p => generateImage(p));
     const allResults = await Promise.all(imagePromises);
 
     const images = allResults.flat();

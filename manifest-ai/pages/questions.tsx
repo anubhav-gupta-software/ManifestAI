@@ -3,17 +3,21 @@ import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 
 const questions = [
-  "What does your perfect day look like from start to finish?",
-  "What kind of home do you dream of living in?",
-  "What is one long-term personal goal you’re working toward?",
-  "What kind of experiences make you feel most fulfilled?",
-  "What are 3 things you want to achieve in the next 5 years?",
-  "If you could master any skill instantly, what would it be and why?",
-  "How do you define success for yourself?",
-  "What kind of impact do you want to make on the world or others?",
-  "What environment or setting do you feel most peaceful in?",
-  "Who or what inspires you the most right now, and why?",
+  "What’s your full name?",
+  "How old are you?",
+  "What's your gender identity?",
+  "Describe your dream day.",
+  "Your ideal home?",
+  "One big goal you’re chasing?",
+  "What fulfills you most?",
+  "3 things you want in 5 years?",
+  "Skill you wish you had instantly?",
+  "What’s your version of success?",
+  "How do you want to impact others?",
+  "What place makes you feel calm?",
+  "Who inspires you most and why?"
 ];
+
 
 export default function QuestionsPage() {
   const [answers, setAnswers] = useState<string[]>(Array(questions.length).fill(''));
