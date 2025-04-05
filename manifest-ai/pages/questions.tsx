@@ -3,19 +3,16 @@ import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 
 const questions = [
-  "What’s your full name?",
-  "How old are you?",
-  "What's your gender identity?",
-  "What are 3-5 specific goals or dreams you want to achieve in the next 6 months to 5 years?",
-  "How do you want to feel in your ideal life, every single day?",
-  "Who is the future version of yourself that you are growing into?",
-  "What areas of your life feel out of alignment right now and how do you want them to shift?",
-  "What kind of lifestyle do you dream of living?",
-  "What kind of people do you want to attract and surround yourself with?",
-  "What would your ideal day look like from morning to night?",
-  "What experiences, places, or milestones do you want to have in your lifetime?",
-  "What do you want to create, contribute, or be remembered for?",
-  "Are there any colors, quotes, or symbols that instantly motivate or center you?",
+  "What does your perfect day look like from start to finish?",
+  "What kind of home do you dream of living in?",
+  "What is one long-term personal goal you’re working toward?",
+  "What kind of experiences make you feel most fulfilled?",
+  "What are 3 things you want to achieve in the next 5 years?",
+  "If you could master any skill instantly, what would it be and why?",
+  "How do you define success for yourself?",
+  "What kind of impact do you want to make on the world or others?",
+  "What environment or setting do you feel most peaceful in?",
+  "Who or what inspires you the most right now, and why?",
 ];
 
 
