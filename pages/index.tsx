@@ -116,7 +116,7 @@ export default function Home() {
           transition={{ duration: 1 }}
           className="text-6xl sm:text-7xl font-extrabold text-white bg-gradient-to-r from-pink-400 to-yellow-400 text-transparent bg-clip-text mb-4"
         >
-          🌈 Manifest Your Dreams ✨
+           Manifest Your Dreams 
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -124,7 +124,7 @@ export default function Home() {
           transition={{ duration: 1, delay: 0.3 }}
           className="text-white text-lg sm:text-xl max-w-2xl mx-auto mb-6"
         >
-          Answer magical questions & let AI visualize the most radiant version of your life. 🌟🎯💭
+          Answer magical questions & let AI visualize the most radiant version of your life.
         </motion.p>
         <motion.button
           initial={{ opacity: 0, scale: 0.9 }}
