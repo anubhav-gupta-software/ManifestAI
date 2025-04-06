@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -23,4 +24,51 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  html {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply antialiased;
+  }
+}
+
+.vignette {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    transparent 30%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+}
+
+.vignette-sides {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.4) 0%,
+    transparent 15%,
+    transparent 85%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+}
+
+.vignette-top {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.4) 0%,
+    transparent 15%
+  );
 }
