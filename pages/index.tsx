@@ -4,6 +4,7 @@ import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Banner from '../components/Banner';
 
 const slides = [
   {
@@ -114,33 +115,45 @@ export default function Home() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="text-6xl sm:text-7xl font-extrabold text-white bg-gradient-to-r from-pink-400 to-yellow-400 text-transparent bg-clip-text mb-4"
+          className="text-[8rem] sm:text-[7rem] md:text-[8.5rem] font-extrabold text-white -mb-4.5 flex items-center gap-6 leading-tight"
         >
-           Manifest Your Dreams 
+          <span className="lexend bg-gradient-to-br from-blue-600 via-blue-400 to-blue-300 text-transparent bg-clip-text">
+            Manifest
+          </span>
+          <span
+            className="text-transparent font-extrabold"
+            style={{
+              WebkitTextStroke: '2px white',
+              color: 'transparent',
+            }}
+          >
+            AI
+          </span>
         </motion.h1>
+
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.3 }}
-          className="text-white text-lg sm:text-xl max-w-2xl mx-auto mb-6"
+          className="text-white text-lg sm:text-xl max-w-2xl mx-auto mb-8 lexend"
         >
-          Answer magical questions & let AI visualize the most radiant version of your life.
+          Discover your vision. Let AI turn your dreams into personalized realities.
         </motion.p>
+
         <motion.button
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, delay: 0.6 }}
-          whileHover={{ scale: 1.1 }}
+          whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleSignIn}
-          className="bg-gradient-to-r from-pink-500 to-yellow-500 text-black font-semibold px-10 py-4 rounded-full shadow-2xl hover:opacity-90 transition duration-300 text-lg"
+          className="bg-white/10 text-white font-medium px-10 py-4 rounded-full shadow-xl hover:bg-white/20 transition duration-300 text-lg backdrop-blur-md border border-white/30"
         >
-          🚀 Sign in with Google
+          Sign in
         </motion.button>
       </div>
 
-      <div className="absolute top-4 left-4 z-30 text-white text-sm bg-purple-600 px-3 py-1 rounded-full shadow">💡 Let’s Manifest</div>
-      <div className="absolute top-4 right-4 z-30 text-white text-sm bg-yellow-500 px-3 py-1 rounded-full shadow">🌟 You’re Magic</div>
+      <Banner />
     </div>
   );
 }
