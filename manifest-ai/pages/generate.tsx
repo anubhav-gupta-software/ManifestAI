@@ -1,156 +1,80 @@
-// import { useEffect, useState } from 'react';
-// import { motion } from 'framer-motion';
-
-// export default function GeneratePage() {
-//   const [prompt, setPrompt] = useState('');
-//   const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     const fetchMasterPrompt = async () => {
-//       const answers = JSON.parse(localStorage.getItem('visionAnswers') || '[]');
-//       const profile = answers.join('\n');
-
-//       try {
-//         const res = await fetch('/api/generate-master-prompt', {
-//           method: 'POST',
-//           headers: { 'Content-Type': 'application/json' },
-//           body: JSON.stringify({ profile })
-//         });
-//         const data = await res.json();
-//         setPrompt(data.prompt || 'No prompt received.');
-//       } catch (err) {
-//         console.error('Error fetching prompt:', err);
-//         setPrompt('Something went wrong!');
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchMasterPrompt();
-//   }, []);
-
-//   return (
-//     <div className="min-h-screen p-6 bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
-//       <motion.h1
-//         initial={{ opacity: 0 }}
-//         animate={{ opacity: 1 }}
-//         transition={{ duration: 0.7 }}
-//         className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-pink-400 to-yellow-400 text-transparent bg-clip-text"
-//       >
-//         ✨ Your AI-Generated Master Prompt
-//       </motion.h1>
-
-//       {loading ? (
-//         <p className="text-center text-gray-300 animate-pulse">Generating your vision prompt... ⏳</p>
-//       ) : (
-//         <motion.div
-//           initial={{ opacity: 0, y: 10 }}
-//           animate={{ opacity: 1, y: 0 }}
-//           transition={{ duration: 0.5 }}
-//           className="max-w-3xl mx-auto bg-gray-900 p-6 rounded-lg shadow-lg border border-gray-700"
-//         >
-//           <p className="whitespace-pre-wrap text-lg leading-relaxed text-pink-200">{prompt}</p>
-//         </motion.div>
-//       )}
-//     </div>
-//   );
-// }
+// pages/generate.tsx
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
+const FACTS = [
+  "🌟 You dream of a peaceful home and meaningful impact.",
+  "🎯 You're goal-driven with a creative spirit.",
+  "💪 You value mastery, growth, and deep inspiration.",
+  "🧘 You find calm in nature and purpose in connection.",
+  "🌎 You aim to live boldly and give back richly.",
+  "🔥 Your vision is full of passion and positivity."
+];
+
 export default function GeneratePage() {
-  const [prompt, setPrompt] = useState('');
-  const [loadingPrompt, setLoadingPrompt] = useState(true);
   const [images, setImages] = useState<string[]>([]);
-  const [loadingImages, setLoadingImages] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [factIndex, setFactIndex] = useState(0);
 
   useEffect(() => {
-    const fetchMasterPrompt = async () => {
+    const fetchPromptAndImages = async () => {
       const answers = JSON.parse(localStorage.getItem('visionAnswers') || '[]');
       const profile = answers.join('\n');
 
       try {
-        const res = await fetch('/api/generate-master-prompt', {
+        const promptRes = await fetch('/api/generate-master-prompt', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ profile })
         });
-        const data = await res.json();
-        setPrompt(data.prompt || 'No prompt received.');
-      } catch (err) {
-        console.error('Error fetching prompt:', err);
-        setPrompt('Something went wrong!');
-      } finally {
-        setLoadingPrompt(false);
-      }
-    };
+        const promptData = await promptRes.json();
+        const prompt = promptData.prompt;
 
-    fetchMasterPrompt();
-  }, []);
-
-  useEffect(() => {
-    const fetchImages = async () => {
-      if (!prompt) return;
-      setLoadingImages(true);
-      try {
-        const res = await fetch('/api/image-generator', {
+        const imageRes = await fetch('/api/image-generator', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ prompt })
         });
-        const data = await res.json();
-        setImages(data.image_url || []);
+        const imageData = await imageRes.json();
+        setImages((imageData.image_url || []).slice(0, 6));
       } catch (err) {
-        console.error('Error generating images:', err);
+        console.error('Error loading vision board:', err);
       } finally {
-        setLoadingImages(false);
+        setLoading(false);
       }
     };
 
-    if (prompt) fetchImages();
-  }, [prompt]);
+    fetchPromptAndImages();
+
+    const factTimer = setInterval(() => {
+      setFactIndex((prev) => (prev + 1) % FACTS.length);
+    }, 3000);
+
+    return () => clearInterval(factTimer);
+  }, []);
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
-      <motion.h1
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.7 }}
-        className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-pink-400 to-yellow-400 text-transparent bg-clip-text"
-      >
-        ✨ Your AI-Generated Vision
-      </motion.h1>
-
-      {loadingPrompt ? (
-        <p className="text-center text-gray-300 animate-pulse">Generating your vision prompt... ⏳</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white px-4 py-10">
+      {loading ? (
+        <div className="flex flex-col items-center justify-center min-h-[80vh] animate-pulse cursor-wait">
+          <div className="text-xl text-purple-300 mb-4">{FACTS[factIndex]}</div>
+          <div className="text-lg text-gray-400">Generating your personal vision board... ✨</div>
+        </div>
       ) : (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-3xl mx-auto bg-gray-900 p-6 rounded-lg shadow-lg border border-gray-700 mb-12"
-        >
-          <p className="whitespace-pre-wrap text-lg leading-relaxed text-pink-200">{prompt}</p>
-        </motion.div>
-      )}
-
-      {loadingImages ? (
-        <p className="text-center text-gray-300 animate-pulse">Creating your vision board images... 🎨</p>
-      ) : images.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {images.map((img, i) => (
+          {images.slice(0, 6).map((img, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: i * 0.1 }}
-              className="overflow-hidden rounded-xl shadow-xl border border-gray-700"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.2, duration: 0.4 }}
+              className="rounded-xl overflow-hidden border-2 border-purple-600 shadow-lg bg-[#1f1f1f]"
             >
-              <img src={img} alt={`vision-${i}`} className="w-full h-auto object-cover" />
+              <img src={img} alt={`vision-${i}`} className="w-full h-full object-cover" />
             </motion.div>
           ))}
         </div>
-      ) : null}
+      )}
     </div>
   );
 }
