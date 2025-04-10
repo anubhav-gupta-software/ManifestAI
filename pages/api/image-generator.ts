@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import Replicate from 'replicate';
 
 const replicate = new Replicate({
-  auth: process.env.REPLICATE_API_TOKEN,
+  auth: process.env.REPLICATE_API_TOKEN!,
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -17,55 +17,47 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Split prompt by delimiter to get individual image prompts
-    const splitPrompts = prompt.split('.....______......').map(p => p.trim()).filter(p => p.length > 0);
+    const splitPrompts = prompt
+      .split('.....______......')
+      .map((p) => p.trim())
+      .filter((p) => p.length > 0)
+      .slice(0, 6); // only allow up to 6 prompts
 
-    const generateImage = async (individualPrompt: string) => {
+    // If fewer than 6 prompts, fill with last valid one
+    while (splitPrompts.length < 6 && splitPrompts.length > 0) {
+      splitPrompts.push(splitPrompts[splitPrompts.length - 1]);
+    }
+
+    const generateImage = async (subPrompt: string) => {
       const prediction = await replicate.predictions.create({
         version: 'black-forest-labs/flux-1.1-pro',
         input: {
-          prompt: individualPrompt,
+          prompt: subPrompt,
           prompt_upsampling: true,
         },
       });
 
-      const predictionId = prediction.id;
-      let result;
+      const id = prediction.id;
+      let result = prediction;
 
-      while (!result || (result.status !== 'succeeded' && result.status !== 'failed')) {
-        console.log(`⏳ Polling for image... (status: ${result?.status || 'starting'})`);
-        await new Promise(res => setTimeout(res, 3000));
-        result = await replicate.predictions.get(predictionId);
+      while (result.status !== 'succeeded' && result.status !== 'failed') {
+        await new Promise((r) => setTimeout(r, 2500));
+        result = await replicate.predictions.get(id);
       }
 
       if (result.status === 'succeeded') {
-        return Array.isArray(result.output) ? result.output : [result.output];
-      } else {
-        throw new Error('Prediction failed.');
+        const output = result.output;
+        return Array.isArray(output) ? output[0] : output;
       }
+
+      throw new Error(`Image generation failed for: ${subPrompt}`);
     };
 
-    // Generate images concurrently for each unique image prompt
-    const imagePromises = splitPrompts.map(p => generateImage(p));
-    const allResults = await Promise.all(imagePromises);
-    const images = allResults.flat();
+    const imageUrls = await Promise.all(splitPrompts.map(generateImage));
 
-    // ✅ Normalize to exactly 6 images
-    let normalizedImages: string[] = [];
-
-    if (images.length >= 6) {
-      normalizedImages = images.slice(0, 6);
-    } else {
-      const last = images[images.length - 1] || '/fallback.jpg'; // Make sure fallback exists in /public
-      normalizedImages = [...images];
-      while (normalizedImages.length < 6) {
-        normalizedImages.push(last);
-      }
-    }
-
-    return res.status(200).json({ image_url: normalizedImages });
+    return res.status(200).json({ image_url: imageUrls });
   } catch (error) {
-    console.error('🔥 Parallel image generation error:', error);
-    return res.status(500).json({ error: 'Image generation failed using Replicate' });
+    console.error('🔥 Image generation error:', error);
+    return res.status(500).json({ error: 'Image generation failed' });
   }
 }

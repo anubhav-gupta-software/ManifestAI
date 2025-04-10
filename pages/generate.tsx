@@ -63,7 +63,7 @@ export default function GeneratePage() {
           body: JSON.stringify({ prompt })
         });
         const data = await res.json();
-        setImages(data.image_url || []);
+        setImages(data.image_url?.slice(0, 6) || []);
       } catch (err) {
         console.error('Error generating images:', err);
       } finally {
