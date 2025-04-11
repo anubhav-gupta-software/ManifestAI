@@ -28,7 +28,7 @@ You will receive a personal profile (10 questions with answers). Based on this, 
 
 Do not list multiple prompts. Write one descriptive, cinematic prompt that could inspire a series of 6 conceptually varied but emotionally unified images.
 
-The result will be used by a tool like Replicate or Midjourney. Keep in under 2500 characters please for each. Please add ".....______......" after each image generated so that I know that one image's prompt is over. Also each image has name, age, and gender so write it in each image(all the features as they are different) so that there is a correct depiction of the person! Also tell it to make ghibli images(write this in each image prompt please) instead of the human like.`,
+The result will be used by a tool like Replicate or Midjourney. Keep in under 2500 characters please for each. Please add ".....______......" after each image generated so that I know that one image's prompt is over. Also each image has name, age, and gender so write it in each image(all the features as they are different) so that there is a correct depiction of the person! Also tell it to make a the human like.`,
         },
         {
           role: 'user',
